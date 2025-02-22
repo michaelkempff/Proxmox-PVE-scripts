@@ -3,7 +3,7 @@ The scripts I use for automating the creation of Virtual Machines on Proxmox PVE
 
 This is my repo for storing the scripts to create my virtual machines on Proxmox PVE. Dont't expect anything fancy, I'm quite a noob when it comes to scripting.
 
-Besides being a noob in scripting, I'm also quite lazy and I want to be able to setup my Server in more easy and recreatable way. I had to swap out my old ssd's in my for some better quality ones because they were wearing out more quickly than I like. 
+Besides being a noob in scripting, I'm also quite lazy and I want to be able to setup my Server in more easy and recreatable way. I had to swap out my old ssd's in my for some better quality ones because they where wearing out more quickly than I like. 
 
 This is a good chance to setup things in a better way. I used to create virtual machines by hand, install them manualy, and configure the service(s) I had in mind for the server. 
 
