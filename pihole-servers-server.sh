@@ -26,7 +26,7 @@ templateName="pihole-servers-server"
 tmp_cores="2"
 tmp_memory="1024"
 cpuTypeRequired="x86-64-v2-AES"
-servicesNetwork="virtio,bridge=vmbr1"
+# servicesNetwork="virtio,bridge=vmbr1"
 osdriveSize="16G"
 datadriveSize="16G"
 
