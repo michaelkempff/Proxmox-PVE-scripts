@@ -1,20 +1,22 @@
 #!/bin/bash
 
-## This script creates a Debian linux VM template on a Proxmox PVE server from a cloud image with secure boot support and some optional settings (which can be commented in or out as desire)d. Run as root, or change the working directory. 
+## This script creates a Debian Linux VM or VM template on a Proxmox PVE server. I'm mainly using Debian Cloud images and use secure boot, and some optional settings (which can be commented in or out as desired). 
+## Run as root, or change the working directory. 
 ## You should have admin rights on the Server.
-## The script is convertible for creating a windows vm (or any non linux os), just get rid of the linux and cloudimage context, chanche the OS type and dont's convert into a template. In the case of using Windows you have to download and install the os after the vm is created.
+## The script is convertible for creating a Windows vm (or any non Linux os), just get rid of the linux and cloudimage context, change the OS type and dont's convert into a template. 
+## In the case of using Windows you have to download and install the os after the vm is created.
 ## My requirements are:
-## - debian linux
-## - the latest image available
-## - usefull for quickly creating a server for home use
-## - a second harddrive to store the servers data (mainly docker related and configuration
-## - secure boot support
-## - apparmor
-## - ready for configuring with ansible
-## - a second network to separate management network and exposed services
-## - some nice to have software
+## - Debian Linux
+## - The latest image available
+## - Usefull for quickly creating a server for home use
+## - A second harddrive to store the servers data as needed
+## - Secure boot support
+## - Apparmor
+## - Ready for configuring with Ansible
+## - A second network to separate management network and services
+## - Some nice to have software I like to have on any server I create
 
-## set the variables (use descriptive names for clarity)
+## Set the variables (use descriptive names for clarity)
 
 imageURL="https://cdimage.debian.org/images/cloud/trixie/daily/latest/debian-13-generic-amd64-daily.qcow2"
 imageName="trixie-server-cloudimg-amd64.img"
@@ -66,7 +68,7 @@ qm set $virtualMachineId --net1 $servicesNetwork
 qm set $virtualMachineId --scsihw virtio-scsi-pci --scsi0 $volumeName:0,discard=on,ssd=1,format=qcow2,import-from=/root/trixie-server-cloudimg-amd64.img
 qm disk resize $virtualMachineId scsi0 $osdriveSize
 
-## Create the virtual harddrive for data
+## Create the virtual harddrive for data (optional)
 qm set $virtualMachineId --scsihw virtio-scsi-pci --scsi1 $volumeName:0,discard=on,ssd=1,format=qcow2
 qm disk resize $virtualMachineId scsi1 $datadriveSize
 
@@ -97,5 +99,5 @@ qm set $virtualMachineId -tpmstate0 $volumeName:1,version=v2.0
 ## Enable QEMU guest agent (optional)
 qm set $virtualMachineId --agent enabled=1
 
-## Convert the image to a template (optional in case you need just a vm)
+## Convert the image to a template (optional in case you just need a vm)
 # qm template $virtualMachineId
