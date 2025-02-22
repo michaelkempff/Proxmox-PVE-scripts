@@ -9,7 +9,7 @@ This is a good chance to setup things in a better way. I used to create virtual 
 
 I like using docker, and the infrastructure as code approach of docker compose files inspires me now to make creation scripts for VM's on Proxmox PVE. Possibly I'm going to use ansible or some kind of alternative for some more automation tasks.
 
-My server is always a work in progress. I use it just for the learning experience, and besides that for running some nice servers to make my life easier. Having the learning experience as priority I do breake things some times. My main goal is to keep a up a little with the technlologies that are running our companies and society. 
+My server is always a work in progress. I just use it for the learning experience, and besides that for running some nice applications to improve my digital experience. Having the learning thing as priority I do breake things some times. My main goal is to keep a up a little with the technologies that are running our society and companies. 
 
 I'm by no means an IT professional, so big chances are I make stupid design choices or compromises a sane person won't make. And while staying open for suggestions, I might not respond to communication or update this repo regularly. 
 
