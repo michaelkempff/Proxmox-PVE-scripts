@@ -1,9 +1,9 @@
 #!/bin/bash
 
-## This script creates a Debian Linux VM or VM template on a Proxmox PVE server. I mainly use Debian Cloud images, and some optional settings. 
+## This script creates a Debian Linux VM or VM template on a Proxmox PVE server. I'm mainly using Debian Cloud images and use secure boot, and some optional settings (which can be commented in or out as desired). 
 ## Run as root, or change the working directory. 
 ## You should have admin rights on the Server.
-## The script is convertible for creating a Windows vm (or any non Linux os), just get rid of the linux specific and cloudimage commands, and change the OS type and do not convert into a template. 
+## The script is convertible for creating a Windows vm (or any non Linux os), just get rid of the linux and cloudimage context, change the OS type and dont's convert into a template. 
 ## In the case of using Windows you have to download and install the os after the vm is created.
 ## My requirements are:
 ## - Debian Linux
