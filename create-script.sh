@@ -49,7 +49,7 @@ wget -O $imageName $imageURL
 ## Ensure the virtualMachineId is not in use
 qm destroy $virtualMachineId
 
-## Install aditional software (eventualy convert this lines to ansible or in a variable in the future)
+## Install aditional software (I might convert this lines to Ansible or to a variable in the future)
 virt-customize -a $imageName --install qemu-guest-agent
 virt-customize -a $imageName --install htop
 virt-customize -a $imageName --install iotop
