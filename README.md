@@ -1,5 +1,7 @@
 # Proxmox-PVE-scripts
-The scipts I use with Proxmox PVE
+The scipts I use with Proxmox PVE.
+
+My inspiration for the structure of this script came from "https://github.com/andrewglass3/ProxmoxCloudInitScript", so thanks to Andrew for his ideas!
 
 DISCLAIMER:
 
