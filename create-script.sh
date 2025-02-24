@@ -1,10 +1,9 @@
 #!/bin/bash
 
-## This script creates a Debian Linux VM or VM template on a Proxmox PVE server. I'm mainly using Debian Cloud images and use secure boot, and some optional settings (which can be commented in or out as desired). 
+## This script creates a Debian Linux VM or VM template on a Proxmox PVE server. I'm mainly using Debian Cloud images, and some optional settings (which can be commented in or out as desired). 
 ## Run as root, or change the working directory. 
 ## You should have admin rights on the Server.
-## The script is convertible for creating a Windows vm (or any non Linux os), just get rid of the linux and cloudimage context, change the OS type and dont's convert into a template. 
-## In the case of using Windows you have to download and install the os after the vm is created.
+## The structure is mainly inspired by: https://github.com/andrewglass3/ProxmoxCloudInitScript
 ## My requirements are:
 ## - Debian Linux
 ## - The latest image available
@@ -13,29 +12,31 @@
 ## - Secure boot support
 ## - Apparmor
 ## - Ready for configuring with Ansible
-## - A second network to separate management network and services
+## - Multiple VLAN's to separate management network and services
 ## - Some nice to have software I like to have on any server I create
 
 ## Set the variables (use descriptive names for clarity)
 
-imageURL="https://cdimage.debian.org/images/cloud/trixie/daily/latest/debian-13-generic-amd64-daily.qcow2"
-imageName="trixie-server-cloudimg-amd64.img"
-volumeName="vmstorage0"
-virtualMachineId="300"
-templateName="nextcloud-server"
-tmp_cores="4"
-tmp_memory="4096"
-cpuTypeRequired="x86-64-v2-AES"
-servicesNetwork="virtio,bridge=vmbr4"
-nfsNetwork="virtio,bridge=vmbr5"
-osdriveSize="16G"
-datadriveSize="32G"
-# pcieDeviceid="0000:14:00.0"
+imageURL="https://cdimage.debian.org/images/cloud/trixie/daily/latest/debian-13-generic-amd64-daily.qcow2" ## Latest version of Debian 13, feel free to use another linux cloud image
+imageName="trixie-server-cloudimg-amd64.img" ## Image name to refer to in this script
+volumeName="vmstorage0" ## Storage volume on the host
+virtualMachineId="100" ## Unique id number for VM
+templateName="service_name-server" ## Name for the template or VM
+tmp_cores="2" ## Number of CPU cores
+tmp_memory="1024" ## RAM in MB
+cpuTypeRequired="x86-64-v2-AES" ## Set the cpu type
+secondNetwork="virtio,bridge=vmbr4"  ## Set the second network, optional, comment out variable and corresponding commands to disable (all servers default to vmbr0 as first network net0)
+# thirdNetwork="virtio,bridge=vmbr5" ## Set the third network, very optional, comment out variable and corresponding commands to disable
+# fourthNetwork="virtio,bridge=vmbr5" ## Set the fourth network, very optional, comment out variable and corresponding commands to disable
+# fifthNetwork="virtio,bridge=vmbr5" ## Set the fifth network, very optional, comment out variable and corresponding commands to disable
+osdriveSize="16G" ## Set the os drive size
+datadriveSize="16G" ## Set the size for the data volume, optional, comment out variable and corresponding command(s) to disable
+# pcieDeviceid="0000:14:00.0" ## Set the pcie id for a device to passthrough to the guest, very optional, comment out variable and corresponding command(s) to disable
 
 ## Set roothome as the working directory
 cd /root
 
-## Enforce the availability of libguestfs-tools for vm image manipulation on the pve server
+## Enforce the availability of libguestfs-tools for VM image manipulation on the PVE server
 apt update
 apt install libguestfs-tools -y
 
@@ -64,10 +65,16 @@ virt-customize -a $imageName --install ansible
 qm create $virtualMachineId --name $templateName --memory $tmp_memory --ostype l26 --sockets 1 --cores $tmp_cores --net0 virtio,bridge=vmbr0 --machine q35
 
 ## Create extra network for services (optional)
-qm set $virtualMachineId --net1 $servicesNetwork
+qm set $virtualMachineId --net1 $secondNetwork
 
-## Create extra network for file sharing
-qm set $virtualMachineId --net2 $nfsNetwork
+## Create extra network (very optional)
+# qm set $virtualMachineId --net2 $thirdNetwork
+
+## Create extra network (very optional)
+# qm set $virtualMachineId --net2 $fourthNetwork
+
+## Create extra network (very optional)
+# qm set $virtualMachineId --net2 $fifthNetwork
 
 ## Create the virtual harddisk for the os
 qm set $virtualMachineId --scsihw virtio-scsi-pci --scsi0 $volumeName:0,discard=on,ssd=1,format=qcow2,import-from=/root/trixie-server-cloudimg-amd64.img
@@ -78,7 +85,7 @@ qm set $virtualMachineId --scsihw virtio-scsi-pci --scsi1 $volumeName:0,discard=
 qm disk resize $virtualMachineId scsi1 $datadriveSize
 
 ## Import the cloud image to the VM
-qm importdisk $virtualMachineId $imageName $volumeName
+qm importdisk $virtualMachineId $imageName $volumeName:0
 
 ## Set the boot order
 qm set $virtualMachineId --boot c --bootdisk scsi0
@@ -89,7 +96,7 @@ qm set $virtualMachineId --ide2 $volumeName:cloudinit
 ## Set the display mode
 qm set $virtualMachineId --serial0 socket --vga serial0
 
-## Set up the network to use dhcp (no dhcp for a server)
+## Set up the primary network to use dhcp (no dhcp for a server)
 # qm set $virtualMachineId --ipconfig0 ip=dhcp
 
 ## Set the cpu type
@@ -104,7 +111,7 @@ qm set $virtualMachineId -tpmstate0 $volumeName:1,version=v2.0
 ## Enable QEMU guest agent (optional)
 qm set $virtualMachineId --agent enabled=1
 
-## Passtrhough NVME SSD for data storage (very optional)
+## Passtrhough pcie device to the guest (very optional)
 # qm set $virtualMachineId -hostpci0 $pcieDeviceid.0,pcie=on
 
 ## Convert the image to a template (optional in case you just need a vm)
