@@ -50,16 +50,16 @@ wget -O $imageName $imageURL
 qm destroy $virtualMachineId
 
 ## Install aditional software (I might convert this lines to Ansible or to a variable in the future)
-virt-customize -a $imageName --install qemu-guest-agent
-virt-customize -a $imageName --install htop
-virt-customize -a $imageName --install iotop
-virt-customize -a $imageName --install strace
-virt-customize -a $imageName --install lsof
-virt-customize -a $imageName --install mc
-virt-customize -a $imageName --install auditd
-virt-customize -a $imageName --install apparmor-utils
-virt-customize -a $imageName --install apparmor-profiles
-virt-customize -a $imageName --install ansible
+virt-customize -a $imageName --install qemu-guest-agent ## optional but recommended
+virt-customize -a $imageName --install htop ## optional
+virt-customize -a $imageName --install iotop ## optional
+virt-customize -a $imageName --install strace ## optional
+virt-customize -a $imageName --install lsof ## optional
+virt-customize -a $imageName --install mc ## optional
+virt-customize -a $imageName --install auditd ## optional
+virt-customize -a $imageName --install apparmor-utils ## optional
+virt-customize -a $imageName --install apparmor-profiles ## optional
+virt-customize -a $imageName --install ansible ## optional
 
 ## Create the VM
 qm create $virtualMachineId --name $templateName --memory $tmp_memory --ostype l26 --sockets 1 --cores $tmp_cores --net0 virtio,bridge=vmbr0 --machine q35
